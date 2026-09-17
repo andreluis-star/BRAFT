@@ -3,25 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#101820">
+<meta name="theme-color" content="#1A3A6E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Coleta BRAFT">
 <title>Coleta BRAFT · TAC Navegantes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#101820;
-    --ink-soft:#26333d;
-    --surface:#eef0ec;
+    --ink:#1A3A6E;
+    --ink-soft:#294876;
+    --surface:#eef1f5;
     --panel:#ffffff;
-    --line:#d3d8d2;
-    --steel:#5b6770;
-    --steel-soft:#8b949b;
-    --signal:#ffb000;
-    --signal-deep:#e39c00;
+    --line:#d5dbe2;
+    --steel:#5b6b7a;
+    --steel-soft:#8a97a4;
+    --signal:#E8611A;
+    --signal-deep:#c9500f;
     --go:#1f7a4d;
     --go-deep:#186340;
     --stop:#c0392b;
@@ -34,13 +34,13 @@
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
   body{
-    font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
     background:var(--surface);color:var(--ink);
     line-height:1.45;
     padding-bottom:calc(72px + env(safe-area-inset-bottom));
     -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3{font-family:"Barlow Semi Condensed",system-ui,sans-serif;margin:0;letter-spacing:.01em}
+  h1,h2,h3{font-family:"Barlow Condensed",system-ui,sans-serif;margin:0;letter-spacing:.01em}
 
   /* ---------- Top bar ---------- */
   header{
@@ -50,14 +50,14 @@
     display:flex;align-items:center;gap:12px;
   }
   header .brand{display:flex;flex-direction:column;line-height:1.1;flex:1;min-width:0}
-  header .brand b{font-family:"Barlow Semi Condensed",sans-serif;font-size:22px;font-weight:700;letter-spacing:.02em}
-  header .brand span{font-size:12px;color:#a9b4bb;font-weight:500}
+  header .brand b{font-family:"Barlow Condensed",sans-serif;font-size:22px;font-weight:700;letter-spacing:.02em}
+  header .brand span{font-size:12px;color:#b7c3d6;font-weight:500}
   header .gear{
-    background:#1d2b35;border:1px solid #33434e;color:#cfd6db;
+    background:#12294f;border:1px solid rgba(255,255,255,.22);color:#dbe2ee;
     width:42px;height:42px;border-radius:11px;display:grid;place-items:center;
     font-size:20px;flex:0 0 auto;
   }
-  header .gear:active{background:#33434e}
+  header .gear:active{background:#0f2244}
   .hazard{height:6px;background:repeating-linear-gradient(45deg,var(--signal) 0 13px,var(--ink) 13px 26px)}
 
   main{max-width:640px;margin:0 auto;padding:16px}
@@ -78,7 +78,7 @@
     font-size:22px;background:var(--ink);color:var(--signal);
   }
   .topic .ttl{flex:1;min-width:0}
-  .topic .ttl b{font-family:"Barlow Semi Condensed",sans-serif;font-size:19px;font-weight:700;display:block}
+  .topic .ttl b{font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:700;display:block}
   .topic .ttl small{color:var(--steel);font-size:12.5px}
   .topic .chev{flex:0 0 auto;color:var(--steel-soft);font-size:15px;transition:transform .2s}
   .topic.open .chev{transform:rotate(90deg)}
@@ -140,7 +140,7 @@
   /* Vehicle cards */
   .veh{border:1px dashed var(--steel-soft);border-radius:12px;padding:14px;margin-bottom:12px;background:#fbfcfb;position:relative}
   .veh .veh-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-  .veh .veh-head b{font-family:"Barlow Semi Condensed",sans-serif;font-size:17px}
+  .veh .veh-head b{font-family:"Barlow Condensed",sans-serif;font-size:17px}
   .veh .rm{
     all:unset;color:var(--stop);font-size:13px;font-weight:600;padding:6px 8px;border-radius:8px;cursor:pointer;
   }
@@ -149,7 +149,7 @@
   .add-veh{
     all:unset;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-sizing:border-box;
     border:1.5px solid var(--ink);border-radius:11px;padding:13px;font-weight:700;color:var(--ink);cursor:pointer;
-    font-family:"Barlow Semi Condensed",sans-serif;font-size:16px;letter-spacing:.02em;
+    font-family:"Barlow Condensed",sans-serif;font-size:16px;letter-spacing:.02em;
   }
   .add-veh:active{background:var(--ink);color:#fff}
   textarea{
@@ -161,10 +161,10 @@
   .actions{display:flex;flex-direction:column;gap:10px;margin-top:4px}
   .btn-send{
     all:unset;display:flex;align-items:center;justify-content:center;gap:10px;box-sizing:border-box;
-    background:var(--go);color:#fff;border-radius:12px;padding:16px;cursor:pointer;
-    font-family:"Barlow Semi Condensed",sans-serif;font-size:19px;font-weight:700;letter-spacing:.02em;
+    background:var(--signal);color:#fff;border-radius:12px;padding:16px;cursor:pointer;
+    font-family:"Barlow Condensed",sans-serif;font-size:19px;font-weight:700;letter-spacing:.02em;
   }
-  .btn-send:active{background:var(--go-deep)}
+  .btn-send:active{background:var(--signal-deep)}
   .btn-send[disabled]{opacity:.6;pointer-events:none}
   .btn-ghost{
     all:unset;text-align:center;box-sizing:border-box;color:var(--steel);font-size:14px;font-weight:600;
@@ -206,7 +206,7 @@
   .sheet .status.no{color:var(--stop)}
   .sheet-close{all:unset;display:block;text-align:center;width:100%;box-sizing:border-box;margin-top:16px;
     padding:14px;background:var(--ink);color:#fff;border-radius:12px;font-weight:700;
-    font-family:"Barlow Semi Condensed",sans-serif;font-size:17px;cursor:pointer}
+    font-family:"Barlow Condensed",sans-serif;font-size:17px;cursor:pointer}
   .toast{
     position:fixed;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:70;
     background:var(--ink);color:#fff;border-radius:12px;padding:14px 16px;font-size:14.5px;font-weight:500;
@@ -578,6 +578,7 @@
       if(res && res.ok === false) throw new Error(res.error || "erro");
       var n = data.veiculos.length;
       toast("<b>Enviado ✓</b> "+n+" veículo(s) na planilha — "+fmtDate(data.data), "ok");
+      resetForm();
     })
     .catch(function(err){
       toast("<b>Falha no envio.</b> Verifique a internet e a URL. Baixe a cópia CSV como backup.", "err");
@@ -609,15 +610,18 @@
     toast("Cópia CSV baixada ✓", "ok");
   });
 
-  /* ---------- Clear ---------- */
-  $("clearBtn").addEventListener("click", function(){
-    if(!confirm("Limpar todos os campos do formulário?")) return;
+  /* ---------- Reset / Clear ---------- */
+  function resetForm(){
     try{ localStorage.removeItem(DRAFT_KEY); }catch(e){}
     ["paletesLevados","paletesSaldo","stretchLevados","stretchSaldo",
      "horaChegada","horaAutorizada","horaTerminoSep","observacoes"].forEach(function(k){ if($(k)) $(k).value=""; });
     $("vehList").innerHTML=""; addVehicle();
     $("data").value = today();
     saveDraft();
+  }
+  $("clearBtn").addEventListener("click", function(){
+    if(!confirm("Limpar todos os campos do formulário?")) return;
+    resetForm();
     toast("Formulário limpo.");
   });
 
