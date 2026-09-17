@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101820">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Coleta BRAFT">
+<title>Coleta BRAFT · TAC Navegantes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#101820;
+    --ink-soft:#26333d;
+    --surface:#eef0ec;
+    --panel:#ffffff;
+    --line:#d3d8d2;
+    --steel:#5b6770;
+    --steel-soft:#8b949b;
+    --signal:#ffb000;
+    --signal-deep:#e39c00;
+    --go:#1f7a4d;
+    --go-deep:#186340;
+    --stop:#c0392b;
+    --dest-sul:#1565c0;
+    --dest-gru:#f4c430;
+    --dest-sp:#ffffff;
+    --radius:14px;
+    --shadow:0 1px 0 rgba(16,24,32,.04), 0 8px 24px -16px rgba(16,24,32,.4);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:var(--surface);color:var(--ink);
+    line-height:1.45;
+    padding-bottom:calc(72px + env(safe-area-inset-bottom));
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:"Barlow Semi Condensed",system-ui,sans-serif;margin:0;letter-spacing:.01em}
+
+  /* ---------- Top bar ---------- */
+  header{
+    position:sticky;top:0;z-index:40;
+    background:var(--ink);color:#fff;
+    padding:calc(env(safe-area-inset-top) + 12px) 16px 12px;
+    display:flex;align-items:center;gap:12px;
+  }
+  header .brand{display:flex;flex-direction:column;line-height:1.1;flex:1;min-width:0}
+  header .brand b{font-family:"Barlow Semi Condensed",sans-serif;font-size:22px;font-weight:700;letter-spacing:.02em}
+  header .brand span{font-size:12px;color:#a9b4bb;font-weight:500}
+  header .gear{
+    background:#1d2b35;border:1px solid #33434e;color:#cfd6db;
+    width:42px;height:42px;border-radius:11px;display:grid;place-items:center;
+    font-size:20px;flex:0 0 auto;
+  }
+  header .gear:active{background:#33434e}
+  .hazard{height:6px;background:repeating-linear-gradient(45deg,var(--signal) 0 13px,var(--ink) 13px 26px)}
+
+  main{max-width:640px;margin:0 auto;padding:16px}
+  section[hidden]{display:none}
+
+  /* ---------- Consulta ---------- */
+  .lead{color:var(--steel);font-size:14px;margin:2px 0 16px}
+  .topic{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow);
+  }
+  .topic > button{
+    all:unset;display:flex;align-items:center;gap:14px;width:100%;
+    padding:16px;cursor:pointer;box-sizing:border-box;
+  }
+  .topic .tag{
+    flex:0 0 auto;width:44px;height:44px;border-radius:11px;display:grid;place-items:center;
+    font-size:22px;background:var(--ink);color:var(--signal);
+  }
+  .topic .ttl{flex:1;min-width:0}
+  .topic .ttl b{font-family:"Barlow Semi Condensed",sans-serif;font-size:19px;font-weight:700;display:block}
+  .topic .ttl small{color:var(--steel);font-size:12.5px}
+  .topic .chev{flex:0 0 auto;color:var(--steel-soft);font-size:15px;transition:transform .2s}
+  .topic.open .chev{transform:rotate(90deg)}
+  .topic .body{display:none;padding:0 16px 8px}
+  .topic.open .body{display:block}
+  .topic.open{border-color:var(--signal)}
+  .check{list-style:none;margin:0;padding:0}
+  .check li{
+    display:flex;gap:11px;align-items:flex-start;
+    padding:11px 2px;border-top:1px solid var(--line);font-size:15px;
+  }
+  .check li::before{
+    content:"";flex:0 0 auto;width:8px;height:8px;border-radius:50%;
+    background:var(--signal);margin-top:7px;box-shadow:0 0 0 3px rgba(255,176,0,.18);
+  }
+  .legend-title{font-size:13px;color:var(--steel);margin:14px 2px 8px;font-weight:600}
+  .dest{display:flex;gap:8px;flex-wrap:wrap;padding:0 2px 8px}
+  .dest .chip{
+    display:flex;align-items:center;gap:8px;border:1px solid var(--line);
+    border-radius:999px;padding:7px 13px 7px 9px;font-size:14px;font-weight:600;background:#fafbfa;
+  }
+  .dest .dot{width:16px;height:16px;border-radius:50%;border:1px solid rgba(16,24,32,.25)}
+
+  /* ---------- Registro ---------- */
+  .group{
+    background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin-bottom:14px;box-shadow:var(--shadow);
+  }
+  .group > h2{
+    font-size:14px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);
+    display:flex;align-items:center;gap:9px;margin-bottom:14px;font-weight:700;
+  }
+  .group > h2 i{width:9px;height:22px;background:var(--signal);border-radius:3px;display:inline-block}
+  .field{margin-bottom:14px}
+  .field:last-child{margin-bottom:0}
+  .field label{display:block;font-size:13.5px;color:var(--steel);font-weight:600;margin-bottom:6px}
+  input,select{
+    width:100%;font-family:inherit;font-size:17px;color:var(--ink);
+    background:#fafbfa;border:1px solid var(--line);border-radius:11px;
+    padding:13px 12px;box-sizing:border-box;
+  }
+  input:focus,select:focus{outline:none;border-color:var(--signal);box-shadow:0 0 0 3px rgba(255,176,0,.22);background:#fff}
+  input[type="number"]{font-variant-numeric:tabular-nums;font-weight:600}
+  input[type="time"]{font-variant-numeric:tabular-nums}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .num-hint{font-size:11.5px;color:var(--steel-soft);margin-top:4px}
+
+  /* Segmented tipo veículo */
+  .seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+  .seg label{
+    margin:0;text-align:center;border:1px solid var(--line);border-radius:10px;
+    padding:11px 4px;font-size:14px;font-weight:600;color:var(--steel);background:#fafbfa;cursor:pointer;
+  }
+  .seg input{position:absolute;opacity:0;pointer-events:none}
+  .seg input:checked + span{color:var(--ink)}
+  .seg label:has(input:checked){background:var(--ink);border-color:var(--ink);color:#fff}
+  .seg label:has(input:checked) span{color:#fff}
+
+  /* Vehicle cards */
+  .veh{border:1px dashed var(--steel-soft);border-radius:12px;padding:14px;margin-bottom:12px;background:#fbfcfb;position:relative}
+  .veh .veh-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .veh .veh-head b{font-family:"Barlow Semi Condensed",sans-serif;font-size:17px}
+  .veh .rm{
+    all:unset;color:var(--stop);font-size:13px;font-weight:600;padding:6px 8px;border-radius:8px;cursor:pointer;
+  }
+  .veh .rm:active{background:rgba(192,57,43,.1)}
+  .veh .rm[disabled]{opacity:.35;pointer-events:none}
+  .add-veh{
+    all:unset;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-sizing:border-box;
+    border:1.5px solid var(--ink);border-radius:11px;padding:13px;font-weight:700;color:var(--ink);cursor:pointer;
+    font-family:"Barlow Semi Condensed",sans-serif;font-size:16px;letter-spacing:.02em;
+  }
+  .add-veh:active{background:var(--ink);color:#fff}
+  textarea{
+    width:100%;font-family:inherit;font-size:16px;background:#fafbfa;border:1px solid var(--line);
+    border-radius:11px;padding:12px;min-height:84px;resize:vertical;box-sizing:border-box;color:var(--ink);
+  }
+  textarea:focus{outline:none;border-color:var(--signal);box-shadow:0 0 0 3px rgba(255,176,0,.22);background:#fff}
+
+  .actions{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+  .btn-send{
+    all:unset;display:flex;align-items:center;justify-content:center;gap:10px;box-sizing:border-box;
+    background:var(--go);color:#fff;border-radius:12px;padding:16px;cursor:pointer;
+    font-family:"Barlow Semi Condensed",sans-serif;font-size:19px;font-weight:700;letter-spacing:.02em;
+  }
+  .btn-send:active{background:var(--go-deep)}
+  .btn-send[disabled]{opacity:.6;pointer-events:none}
+  .btn-ghost{
+    all:unset;text-align:center;box-sizing:border-box;color:var(--steel);font-size:14px;font-weight:600;
+    padding:10px;cursor:pointer;
+  }
+  .btn-ghost:active{color:var(--ink)}
+  .save-state{font-size:12px;color:var(--steel-soft);text-align:center;margin-top:2px;min-height:16px}
+
+  /* ---------- Bottom nav ---------- */
+  nav{
+    position:fixed;bottom:0;left:0;right:0;z-index:40;
+    background:var(--panel);border-top:1px solid var(--line);
+    display:flex;padding-bottom:env(safe-area-inset-bottom);
+    box-shadow:0 -6px 20px -16px rgba(16,24,32,.5);
+  }
+  nav button{
+    all:unset;flex:1;text-align:center;padding:11px 0 13px;cursor:pointer;color:var(--steel-soft);
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+  }
+  nav button .ic{font-size:22px;line-height:1}
+  nav button .lb{font-size:12px;font-weight:600}
+  nav button.active{color:var(--ink)}
+  nav button.active .ic{color:var(--signal-deep)}
+  nav button[data-tab="registro"] .ic{position:relative}
+
+  /* ---------- Settings sheet + toast ---------- */
+  .scrim{position:fixed;inset:0;background:rgba(16,24,32,.5);z-index:50;display:none}
+  .scrim.show{display:block}
+  .sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--panel);
+    border-radius:18px 18px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+    transform:translateY(100%);transition:transform .25s ease;max-width:640px;margin:0 auto;
+  }
+  .sheet.show{transform:translateY(0)}
+  .sheet h3{font-size:19px;margin-bottom:4px}
+  .sheet p{font-size:13px;color:var(--steel);margin:0 0 14px}
+  .sheet .status{font-size:13px;font-weight:600;margin-top:10px}
+  .sheet .status.ok{color:var(--go)}
+  .sheet .status.no{color:var(--stop)}
+  .sheet-close{all:unset;display:block;text-align:center;width:100%;box-sizing:border-box;margin-top:16px;
+    padding:14px;background:var(--ink);color:#fff;border-radius:12px;font-weight:700;
+    font-family:"Barlow Semi Condensed",sans-serif;font-size:17px;cursor:pointer}
+  .toast{
+    position:fixed;left:16px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom));z-index:70;
+    background:var(--ink);color:#fff;border-radius:12px;padding:14px 16px;font-size:14.5px;font-weight:500;
+    box-shadow:var(--shadow);transform:translateY(30px);opacity:0;transition:.25s;pointer-events:none;
+    max-width:608px;margin:0 auto;display:flex;gap:10px;align-items:center;
+  }
+  .toast.show{transform:translateY(0);opacity:1}
+  .toast.ok{background:var(--go)} .toast.err{background:var(--stop)}
+  .toast b{font-weight:700}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <b>COLETA BRAFT</b>
+    <span>TAC · Navegantes — checklist &amp; registro</span>
+  </div>
+  <button class="gear" id="gearBtn" aria-label="Configurar planilha">⚙</button>
+</header>
+<div class="hazard"></div>
+
+<main>
+  <!-- ============ CONSULTA ============ -->
+  <section id="consulta">
+    <p class="lead">Toque em um tópico para lembrar como proceder na coleta.</p>
+
+    <div class="topic" data-topic>
+      <button type="button">
+        <span class="tag">▦</span>
+        <span class="ttl"><b>Paletização</b><small>5 pontos de atenção</small></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="body">
+        <ul class="check">
+          <li>Paletes com no máximo <b>1,60 m</b> de altura</li>
+          <li>Caixas pesadas na base, leves no topo</li>
+          <li>Stretch aplicado da base ao topo em padrão <b>“X”</b></li>
+          <li>Cordas de amarração a cada <b>2 paletes</b> no veículo</li>
+          <li>Folha de rosto padrão em todos os paletes</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="topic" data-topic>
+      <button type="button">
+        <span class="tag">▤</span>
+        <span class="ttl"><b>Carga batida</b><small>5 pontos de atenção</small></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="body">
+        <ul class="check">
+          <li>Altura máxima de <b>1,80 m</b> respeitada</li>
+          <li>Produto <b>Lona</b> posicionado na base da carga</li>
+          <li>Cargas pesadas embaixo, leves em cima</li>
+          <li>Amarração padrão aplicada em toda a carga</li>
+          <li>Embalagens protegidas contra danos</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="topic" data-topic>
+      <button type="button">
+        <span class="tag">☑</span>
+        <span class="ttl"><b>Conferência</b><small>4 pontos de atenção</small></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="body">
+        <ul class="check">
+          <li>NFs de prioridade conferidas (informado pela BRAFT)</li>
+          <li>“Cara-crachá” verificado para todos os funcionários</li>
+          <li>Time de conferência com treinamento atualizado</li>
+          <li>Item avariado no operador: registrar <b>antes e depois</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="topic" data-topic>
+      <button type="button">
+        <span class="tag">◳</span>
+        <span class="ttl"><b>Encerramento</b><small>5 pontos + cores por destino</small></span>
+        <span class="chev">▶</span>
+      </button>
+      <div class="body">
+        <ul class="check">
+          <li>Fotos de toda a carga registradas</li>
+          <li>Operação liberada pelo responsável</li>
+          <li>Horários registrados na planilha de controle</li>
+          <li>Observações relevantes anotadas</li>
+          <li>Conferir a cor da folha de rosto por destino</li>
+        </ul>
+        <div class="legend-title">Folha de rosto — cor por destino</div>
+        <div class="dest">
+          <span class="chip"><span class="dot" style="background:var(--dest-sul)"></span>Azul → Sul</span>
+          <span class="chip"><span class="dot" style="background:var(--dest-gru)"></span>Amarelo → Guarulhos</span>
+          <span class="chip"><span class="dot" style="background:var(--dest-sp)"></span>Branco → SP</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REGISTRO ============ -->
+  <section id="registro" hidden>
+    <div class="group">
+      <h2><i></i>Dia da coleta</h2>
+      <div class="field">
+        <label for="data">Data</label>
+        <input type="date" id="data">
+      </div>
+    </div>
+
+    <div class="group">
+      <h2><i></i>Movimentação</h2>
+      <div class="grid2">
+        <div class="field">
+          <label for="paletesLevados">Paletes levados</label>
+          <input type="number" inputmode="numeric" min="0" id="paletesLevados" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="paletesSaldo">Paletes c/ saldo na TAC</label>
+          <input type="number" inputmode="numeric" min="0" id="paletesSaldo" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="stretchLevados">Stretch levados</label>
+          <input type="number" inputmode="numeric" min="0" id="stretchLevados" placeholder="0">
+        </div>
+        <div class="field">
+          <label for="stretchSaldo">Stretch c/ saldo na TAC</label>
+          <input type="number" inputmode="numeric" min="0" id="stretchSaldo" placeholder="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="group">
+      <h2><i></i>Horários da operação</h2>
+      <div class="field">
+        <label for="horaChegada">Hora chegada</label>
+        <input type="time" id="horaChegada">
+      </div>
+      <div class="field">
+        <label for="horaAutorizada">Hora autorizada a entrada</label>
+        <input type="time" id="horaAutorizada">
+      </div>
+      <div class="field">
+        <label for="horaTerminoSep">Hora término separação</label>
+        <input type="time" id="horaTerminoSep">
+      </div>
+    </div>
+
+    <div class="group">
+      <h2><i></i>Veículos da coleta</h2>
+      <div id="vehList"></div>
+      <button type="button" class="add-veh" id="addVeh">+ Adicionar veículo</button>
+    </div>
+
+    <div class="group">
+      <h2><i></i>Observações</h2>
+      <div class="field">
+        <textarea id="observacoes" placeholder="Anote o que for relevante do dia (avarias, atrasos, prioridades…)"></textarea>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="btn-send" id="sendBtn">Enviar para a planilha</button>
+      <button type="button" class="btn-ghost" id="csvBtn">Baixar cópia (CSV)</button>
+      <button type="button" class="btn-ghost" id="clearBtn">Limpar formulário</button>
+      <div class="save-state" id="saveState"></div>
+    </div>
+  </section>
+</main>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <button data-tab="consulta" class="active"><span class="ic">▦</span><span class="lb">Consulta</span></button>
+  <button data-tab="registro"><span class="ic">✎</span><span class="lb">Registro</span></button>
+</nav>
+
+<!-- ============ SETTINGS ============ -->
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet">
+  <h3>Conectar planilha</h3>
+  <p>Cole aqui a URL do App da Web (Apps Script) que grava na sua planilha do Google Sheets.</p>
+  <div class="field">
+    <label for="webAppUrl">URL do App da Web</label>
+    <input type="url" id="webAppUrl" placeholder="https://script.google.com/macros/s/…/exec">
+  </div>
+  <div class="status" id="urlStatus"></div>
+  <button type="button" class="sheet-close" id="sheetClose">Salvar e fechar</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+  var DRAFT_KEY = "braft_tac_draft_v1";
+  var URL_KEY   = "braft_tac_webappurl_v1";
+  var TIPOS = ["Carreta","Truck","3/4","Van"];
+  var vehSeq = 0;
+
+  var $ = function(id){ return document.getElementById(id); };
+
+  /* ---------- Tabs ---------- */
+  document.querySelectorAll("nav button").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.querySelectorAll("nav button").forEach(function(x){ x.classList.remove("active"); });
+      b.classList.add("active");
+      var tab = b.dataset.tab;
+      $("consulta").hidden = tab !== "consulta";
+      $("registro").hidden = tab !== "registro";
+      window.scrollTo(0,0);
+    });
+  });
+
+  /* ---------- Accordion ---------- */
+  document.querySelectorAll("[data-topic] > button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      btn.parentElement.classList.toggle("open");
+    });
+  });
+
+  /* ---------- Vehicles ---------- */
+  function vehTemplate(n){
+    var id = ++vehSeq;
+    var segs = TIPOS.map(function(t){
+      return '<label><input type="radio" name="tipo-'+id+'" value="'+t+'"><span>'+t+'</span></label>';
+    }).join("");
+    var el = document.createElement("div");
+    el.className = "veh";
+    el.dataset.veh = id;
+    el.innerHTML =
+      '<div class="veh-head"><b class="veh-n">Veículo '+n+'</b>'+
+      '<button type="button" class="rm">Remover</button></div>'+
+      '<div class="field"><label>Tipo de veículo</label><div class="seg">'+segs+'</div></div>'+
+      '<div class="field"><label>Hora chegada do veículo</label><input type="time" class="v-chegada"></div>'+
+      '<div class="field"><label>Hora início carregamento</label><input type="time" class="v-inicio"></div>'+
+      '<div class="field"><label>Hora término carregamento</label><input type="time" class="v-termino"></div>';
+    el.querySelector(".rm").addEventListener("click", function(){
+      el.remove(); renumberVehicles(); saveDraft();
+    });
+    el.addEventListener("input", saveDraft);
+    return el;
+  }
+  function renumberVehicles(){
+    var list = $("vehList").children;
+    for (var i=0;i<list.length;i++){ list[i].querySelector(".veh-n").textContent = "Veículo "+(i+1); }
+    var rmBtns = $("vehList").querySelectorAll(".rm");
+    rmBtns.forEach(function(b){ b.disabled = (list.length <= 1); });
+  }
+  function addVehicle(){
+    $("vehList").appendChild(vehTemplate($("vehList").children.length+1));
+    renumberVehicles();
+  }
+  $("addVeh").addEventListener("click", function(){ addVehicle(); saveDraft(); });
+
+  /* ---------- Collect / restore ---------- */
+  function collect(){
+    var veiculos = [];
+    $("vehList").querySelectorAll(".veh").forEach(function(v){
+      var tipoEl = v.querySelector('input[type=radio]:checked');
+      veiculos.push({
+        tipo: tipoEl ? tipoEl.value : "",
+        horaChegadaVeiculo: v.querySelector(".v-chegada").value,
+        horaInicioCarreg:   v.querySelector(".v-inicio").value,
+        horaTerminoCarreg:  v.querySelector(".v-termino").value
+      });
+    });
+    return {
+      data: $("data").value,
+      paletesLevados: $("paletesLevados").value,
+      paletesSaldo:   $("paletesSaldo").value,
+      stretchLevados: $("stretchLevados").value,
+      stretchSaldo:   $("stretchSaldo").value,
+      horaChegada:      $("horaChegada").value,
+      horaAutorizada:   $("horaAutorizada").value,
+      horaTerminoSep:   $("horaTerminoSep").value,
+      observacoes: $("observacoes").value,
+      veiculos: veiculos
+    };
+  }
+  function restore(d){
+    if(!d) return;
+    ["data","paletesLevados","paletesSaldo","stretchLevados","stretchSaldo",
+     "horaChegada","horaAutorizada","horaTerminoSep","observacoes"].forEach(function(k){
+      if(d[k] != null && $(k)) $(k).value = d[k];
+    });
+    $("vehList").innerHTML = "";
+    var vs = (d.veiculos && d.veiculos.length) ? d.veiculos : [{}];
+    vs.forEach(function(v, i){
+      var el = vehTemplate(i+1);
+      $("vehList").appendChild(el);
+      if(v.tipo){
+        var r = el.querySelector('input[value="'+v.tipo+'"]');
+        if(r) r.checked = true;
+      }
+      if(v.horaChegadaVeiculo) el.querySelector(".v-chegada").value = v.horaChegadaVeiculo;
+      if(v.horaInicioCarreg)   el.querySelector(".v-inicio").value  = v.horaInicioCarreg;
+      if(v.horaTerminoCarreg)  el.querySelector(".v-termino").value = v.horaTerminoCarreg;
+    });
+    renumberVehicles();
+  }
+
+  /* ---------- Draft persistence ---------- */
+  var saveTimer;
+  function saveDraft(){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function(){
+      try{
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(collect()));
+        var s = $("saveState"); s.textContent = "Rascunho salvo no aparelho ✓";
+        setTimeout(function(){ s.textContent=""; }, 1600);
+      }catch(e){}
+    }, 350);
+  }
+  ["data","paletesLevados","paletesSaldo","stretchLevados","stretchSaldo",
+   "horaChegada","horaAutorizada","horaTerminoSep","observacoes"].forEach(function(k){
+    var el = $(k); if(el) el.addEventListener("input", saveDraft);
+  });
+
+  /* ---------- Toast ---------- */
+  function toast(msg, kind){
+    var t = $("toast");
+    t.className = "toast show" + (kind ? " "+kind : "");
+    t.innerHTML = msg;
+    clearTimeout(t._t);
+    t._t = setTimeout(function(){ t.className = "toast"; }, 3400);
+  }
+
+  /* ---------- Settings ---------- */
+  function openSheet(){ $("scrim").classList.add("show"); $("sheet").classList.add("show"); }
+  function closeSheet(){ $("scrim").classList.remove("show"); $("sheet").classList.remove("show"); }
+  $("gearBtn").addEventListener("click", openSheet);
+  $("scrim").addEventListener("click", closeSheet);
+  $("sheetClose").addEventListener("click", function(){
+    var u = $("webAppUrl").value.trim();
+    try{ localStorage.setItem(URL_KEY, u); }catch(e){}
+    updateUrlStatus();
+    closeSheet();
+    toast(u ? "Planilha conectada ✓" : "URL removida", u ? "ok" : "");
+  });
+  function getUrl(){ try{ return localStorage.getItem(URL_KEY) || ""; }catch(e){ return ""; } }
+  function updateUrlStatus(){
+    var u = getUrl(), s = $("urlStatus");
+    if(u){ s.className="status ok"; s.textContent="Conectada."; }
+    else { s.className="status no"; s.textContent="Ainda não conectada — o envio ficará indisponível."; }
+  }
+
+  /* ---------- Export to Sheets ---------- */
+  function fmtDate(iso){
+    if(!iso) return "";
+    var p = iso.split("-"); return p.length===3 ? p[2]+"/"+p[1]+"/"+p[0] : iso;
+  }
+  $("sendBtn").addEventListener("click", function(){
+    var url = getUrl();
+    if(!url){ toast("Conecte a planilha primeiro (ícone ⚙).", "err"); openSheet(); return; }
+    var data = collect();
+    if(!data.data){ toast("Informe a data da coleta.", "err"); $("data").focus(); return; }
+    var btn = this; btn.disabled = true; var old = btn.textContent; btn.textContent = "Enviando…";
+    var payload = Object.assign({}, data, {
+      registradoEm: new Date().toISOString(),
+      origem: "app-coleta-braft"
+    });
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json().catch(function(){ return {ok:true}; }); })
+    .then(function(res){
+      if(res && res.ok === false) throw new Error(res.error || "erro");
+      var n = data.veiculos.length;
+      toast("<b>Enviado ✓</b> "+n+" veículo(s) na planilha — "+fmtDate(data.data), "ok");
+    })
+    .catch(function(err){
+      toast("<b>Falha no envio.</b> Verifique a internet e a URL. Baixe a cópia CSV como backup.", "err");
+    })
+    .finally(function(){ btn.disabled = false; btn.textContent = old; });
+  });
+
+  /* ---------- CSV backup ---------- */
+  $("csvBtn").addEventListener("click", function(){
+    var d = collect();
+    var head = ["Data","Paletes levados","Paletes saldo TAC","Stretch levados","Stretch saldo TAC",
+      "Hora chegada","Hora autorizada","Termino separacao","Nº veiculo","Tipo veiculo",
+      "Chegada veiculo","Inicio carregamento","Termino carregamento","Observacoes"];
+    var rows = [head];
+    (d.veiculos.length?d.veiculos:[{}]).forEach(function(v,i){
+      rows.push([fmtDate(d.data),d.paletesLevados,d.paletesSaldo,d.stretchLevados,d.stretchSaldo,
+        d.horaChegada,d.horaAutorizada,d.horaTerminoSep,(i+1),v.tipo||"",
+        v.horaChegadaVeiculo||"",v.horaInicioCarreg||"",v.horaTerminoCarreg||"",d.observacoes||""]);
+    });
+    var csv = rows.map(function(r){
+      return r.map(function(c){ c=(c==null?"":String(c)); return /[",;\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c; }).join(";");
+    }).join("\n");
+    var blob = new Blob(["\ufeff"+csv], {type:"text/csv;charset=utf-8"});
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "coleta-braft-"+(d.data||"sem-data")+".csv";
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 1500);
+    toast("Cópia CSV baixada ✓", "ok");
+  });
+
+  /* ---------- Clear ---------- */
+  $("clearBtn").addEventListener("click", function(){
+    if(!confirm("Limpar todos os campos do formulário?")) return;
+    try{ localStorage.removeItem(DRAFT_KEY); }catch(e){}
+    ["paletesLevados","paletesSaldo","stretchLevados","stretchSaldo",
+     "horaChegada","horaAutorizada","horaTerminoSep","observacoes"].forEach(function(k){ if($(k)) $(k).value=""; });
+    $("vehList").innerHTML=""; addVehicle();
+    $("data").value = today();
+    saveDraft();
+    toast("Formulário limpo.");
+  });
+
+  /* ---------- Init ---------- */
+  function today(){
+    var d = new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+    return d.toISOString().slice(0,10);
+  }
+  (function init(){
+    var draft = null;
+    try{ draft = JSON.parse(localStorage.getItem(DRAFT_KEY)); }catch(e){}
+    if(draft){ restore(draft); }
+    else { addVehicle(); }
+    if(!$("data").value) $("data").value = today();
+    $("webAppUrl").value = getUrl();
+    updateUrlStatus();
+  })();
+})();
+</script>
+</body>
+</html>
