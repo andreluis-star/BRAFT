@@ -321,7 +321,7 @@
       <h2><i></i>Movimentação</h2>
       <div class="grid2">
         <div class="field">
-          <label for="paletesLevados">Paletes levados</label>
+          <label for="paletesLevados">Paletes feitos</label>
           <input type="number" inputmode="numeric" min="0" id="paletesLevados" placeholder="0">
         </div>
         <div class="field">
@@ -588,7 +588,7 @@
   /* ---------- CSV backup ---------- */
   $("csvBtn").addEventListener("click", function(){
     var d = collect();
-    var head = ["Data","Paletes levados","Paletes saldo TAC","Stretch levados","Stretch saldo TAC",
+    var head = ["Data","Paletes feitos","Paletes saldo TAC","Stretch levados","Stretch saldo TAC",
       "Hora chegada","Hora autorizada","Termino separacao","Nº veiculo","Tipo veiculo",
       "Chegada veiculo","Inicio carregamento","Termino carregamento","Observacoes"];
     var rows = [head];
